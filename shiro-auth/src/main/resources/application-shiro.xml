@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--shrio的核心对象-->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="crmReal"/>
+        <!--自定义sessionManager获取 sessionid-->
+        <property name="sessionManager">
+            <bean class="cn.itsource.crm.auth.MySessionManager"/>
+        </property>
+    </bean>
+
+    <bean id="crmReal" class="cn.itsource.crm.auth.CrmReal">
+        <property name="credentialsMatcher">
+            <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+                <!--加密次数-->
+                <property name="hashIterations" value="10"/>
+                <!--加密方式-->
+                <property name="hashAlgorithmName" value="MD5"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!--shiro的过滤器配置 必须和 web.xml里面配置的一样-->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <property name="filterChainDefinitionMap" ref="filterChainDefinitionMap"/>
+        <property name="filters">
+            <map>
+                <entry key="myAuthc">
+                    <bean class="cn.itsource.crm.auth.MyAuthenFilter"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="filterChainDefinitionMapFactory" class="cn.itsource.crm.auth.FilterChainDefinitionMapFactory"/>
+    <bean id="filterChainDefinitionMap" factory-bean="filterChainDefinitionMapFactory" factory-method="getMap"/>
+    <bean id="myAuthenFilter" class="cn.itsource.crm.auth.MyAuthenFilter"/>
+</beans>

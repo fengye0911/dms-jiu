@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--属性文件引入-->
+    <context:property-placeholder location="classpath*:dbcp.properties"/>
+    <!--数据源-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <!--连接池配置-->
+        <property name="initialSize" value="${jdbc.initialSize}"/>
+<!--        <property name="minIdle" value="${jdbc.minIdle}"/>-->
+        <property name="maxActive" value="${jdbc.maxActive}"/>
+<!--        <property name="maxWait" value="${jdbc.maxWait}"/>-->
+
+    </bean>
+
+
+    <!--配置myBatis核心对象  SqlSessionFactoryBean，将mybatis-config.xml中的所有的内容都可以配置到SqlSessionFactoryBean中-->
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <!--别名-->
+        <property name="typeAliasesPackage" >
+            <value>
+                cn.itsource.crm.domain
+                cn.itsource.crm.query
+
+            </value>
+        </property>
+        <!--注册mapper.xml映射文件-->
+        <property name="mapperLocations" value="classpath*:cn/itsource/crm/mapper/*Mapper.xml" />
+
+    </bean>
+
+    <!--一劳永逸,动态代理对象，注入映射器-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="cn.itsource.crm.mapper" />
+    </bean>
+
+
+
+
+</beans>

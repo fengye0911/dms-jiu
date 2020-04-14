@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+<!--错误：
+      文件引入不了，
+      原因：之前删除模块重建了以后会忽略这个模块，到的包就没有生效
+      解决：在setting/maven/ignore file 里面把这个模块的勾勾去掉，导的包就生效了
+
+-->
+
+    <!--扫描的包-->
+    <context:component-scan base-package="cn.itsource.crm.web.controller"/>
+    <context:component-scan base-package="cn.itsource.crm.config"/>
+    <context:component-scan base-package="cn.itsource.crm.lucene"/>
+
+    <!--启用mvc的注解-->
+    <mvc:annotation-driven/>
+
+    <!--静态资源放行-->
+    <mvc:default-servlet-handler/>
+
+    <!-- easypoi的Bean解析器,级别高于默认解析器,寻找bean对象进行二次处理 -->
+    <bean id="beanNameViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver " p:order="0">
+    </bean>
+
+    <!--文件上传解析器-->
+    <bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="utf-8"/>
+        <property name="maxUploadSize" value="10000000"/>
+    </bean>
+
+</beans>
